@@ -1,0 +1,3 @@
+beautifultable==1.0.1
+colorlog==6.6.0
+wcwidth==0.2.5
