@@ -2,7 +2,7 @@ from typing import TypeVar, Generic
 
 # project type
 from lib.log_logger import logger
-from lib.node import NodeClass, Node
+from lib.node import NodeClass
 
 NodeListClass = TypeVar("NodeListClass")
 
@@ -28,9 +28,9 @@ class Nodes(Generic[NodeListClass]):
     def is_affinity_full(pod: dict, node: NodeClass) -> bool:
         """
         Check affinity rules on a node
-        :param pod: d
-        :param node:
-        :return:
+        :param pod: Pod Specs
+        :param node: Node object
+        :return: True - Pod has a copy on node; False - all good
         """
         if not pod.get("affinity") and pod.get("affinity") == 0:
             return False
@@ -71,7 +71,6 @@ class Nodes(Generic[NodeListClass]):
         """
         s = self.node_list
         s.sort(key=lambda x: x.pods_total)
-        # print([len(x.pods) for x in s])
         for _node in s:
             if self.is_node_schedulable(_node, pod):
                 return _node

@@ -9,14 +9,13 @@ from lib.node_list import Nodes
 from lib.cvs_loader import csv_to_json
 
 # Constants
-
 MIN_WORKERS = 3
 COMPUTE_CPU = 104
 COMPUTE_MEM = 384000
 ALLOCATION_PERCENT = 70
 
 if __name__ == "__main__":
-    parser = ArgumentParser(description="Read file form Command line.")
+    parser = ArgumentParser(description="Read CSV form given path.")
     parser.add_argument(
         "-i",
         "--input",
@@ -42,7 +41,6 @@ if __name__ == "__main__":
         )
     # Allocate nodes
     for pod in CreatPodList.add_pods(pods):
-        # node_list.find_node(pod)
         if not (node := node_list.find_node(pod)):
             logger.warning("Can not find schedulable node. Adding new one")
             node = Node(
