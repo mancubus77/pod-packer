@@ -53,7 +53,7 @@ def parse_args():
         dest="csv",
         required=False,
         action="store_true",
-        help="csv output",
+        help="csv output, needs to be used with -d/--detail",
     )
 
     return parser.parse_args()
