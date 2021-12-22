@@ -12,7 +12,7 @@ class CreatPodList(object):
         for pod in pods:
             for values in map(
                 lambda x: {
-                    "name": pod["name"],
+                    "app": pod["app"],
                     "mem": int(pod["mem"]),
                     "cpu": int(pod["cpu"]) / 1000,
                     "affinity": int(pod["affinity"]),

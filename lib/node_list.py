@@ -34,9 +34,9 @@ class Nodes(Generic[NodeListClass]):
         """
         if not pod.get("affinity") and pod.get("affinity") == 0:
             return False
-        entries = len([v for v in node.pods if v.get("name") == pod["name"]])
+        entries = len([v for v in node.pods if v.get("app") == pod["app"]])
         if entries >= pod["max_per_node"]:
-            logger.info(f"Pod {pod['name']} has {entries} copies in {node.name}")
+            logger.info(f"Pod {pod['app']} has {entries} copies in {node.name}")
             return True
         else:
             return False
@@ -58,7 +58,7 @@ class Nodes(Generic[NodeListClass]):
             )
             return False
         elif self.is_affinity_full(pod, node):
-            logger.warning(f"{node.name} affinity violation for {pod['name']}")
+            logger.warning(f"{node.name} affinity violation for {pod['app']}")
             return False
         else:
             return True
