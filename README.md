@@ -73,7 +73,7 @@ nginx,100,3,3,3
 
 ```
 Detailed view
-```
+```python
 ❯ python main.py -i data_sample/example.csv -d
  [Wed, 22 Dec 2021 16:59:43] INFO [main.py.<module>:65] Starting allocation, there are 2 apps to be allocated                                                            ─╯
  [Wed, 22 Dec 2021 16:59:43] INFO [node.py.__init__:29] Creating new node compute-0
