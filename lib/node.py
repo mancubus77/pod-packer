@@ -10,10 +10,6 @@ class Node(Generic[NodeClass]):
     Node Class to store pods
     """
 
-    COMPUTE_CPU = 0
-    COMPUTE_MEM = 0
-    ALLOCATION_PERCENT = 0
-
     def __init__(self, name: int, mem_total: int, cpu_total: int, allocation: int):
         self.mem_total = mem_total
         self.cpu_total = cpu_total

@@ -16,18 +16,3 @@ class BTable:
 
     def __str__(self):
         return f"{self.table}"
-
-
-# ]
-# for node in node_list.node_list:
-#     table.append_row(
-#         [
-#             node.app,
-#             len(node.pods),
-#             node.cpu_used,
-#             (node.cpu_used / node.cpu_total) * 100,
-#             node.mem_used,
-#             (node.mem_used / node.mem_total) * 100,
-#         ]
-#     )
-# print(table)
