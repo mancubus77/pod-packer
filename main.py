@@ -18,6 +18,10 @@ ALLOCATION_PERCENT = 70
 
 
 def parse_args():
+    """
+    Parse CLI arguments
+    :return: parser object with arguments
+    """
     parser = ArgumentParser(description="Read CSV form given path.")
     parser.add_argument(
         "-i",
@@ -66,6 +70,10 @@ def run_allocations():
 
 
 def print_results():
+    """
+    Print neat table using BTable
+    :return: Formatted Table with borders (string)
+    """
     table = BTable()
     pod_table = BTable()
     table.create_heading(["node",
