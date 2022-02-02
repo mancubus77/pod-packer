@@ -76,13 +76,12 @@ def print_results():
     """
     table = BTable()
     pod_table = BTable()
-    table.create_heading(["node",
-                          "pod count",
-                          "cpu",
-                          "cpu,%",
-                          "mem, GB",
-                          "mem,%",
-                          ])
+    table.create_heading(
+        ["node", "pod count", "cpu", "cpu,%", "mem, GB", "mem,%",]
+    )
+    # blah...
+    if args.csv:
+        print("node,app,mem,cpu,anti-affinity,max_per_node")
     for node in node_list.node_list:
         table.append_row(
             [
@@ -108,7 +107,7 @@ def print_results():
 if __name__ == "__main__":
     args = parse_args()
     node_list = Nodes()
-    apps = csv_to_json(args.filename)
+    apps = (sorted(csv_to_json(args.filename), key=lambda i: i["affinity"], reverse=True))
     logger.info(f"Starting allocation, there are {len(apps)} apps to be allocated")
     for _ in range(MIN_WORKERS):
         node_list.add_node(

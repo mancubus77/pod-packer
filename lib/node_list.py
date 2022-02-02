@@ -49,23 +49,25 @@ class Nodes(Generic[NodeListClass]):
         :param pod: Pod specs
         :return: True - Node is schedulable, False - node is not schdulable take next
         """
-        if (
+        if self.is_affinity_full(pod, node):
+            logger.warning(f"{node.name} affinity violation for {pod['app']}")
+            return False
+        elif (
             node.cpu_used + pod["cpu"] > node.cpu_available
             or node.mem_used + pod["mem"] > node.mem_available
         ):
             logger.warning(
-                f"Node is full: CPU: {node.cpu_used + pod['cpu'] > node.cpu_available} MEM: {node.mem_used + pod['mem'] > node.mem_available}"
+                f"Node {node.name} is full: CPU: {node.cpu_used + pod['cpu'] > node.cpu_available} "
+                f"MEM: {node.mem_used + pod['mem'] > node.mem_available} "
+                f"{node.mem_used + pod['mem']} : {node.mem_available}"
             )
-            return False
-        elif self.is_affinity_full(pod, node):
-            logger.warning(f"{node.name} affinity violation for {pod['app']}")
             return False
         else:
             return True
 
     def find_node(self, pod: dict):
         """
-        Find available node what can accomodate POD
+        Find available node what can accommodate  POD
         :param pod: pod specs
         :return: Node object
         """
