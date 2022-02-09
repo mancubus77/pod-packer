@@ -1,4 +1,14 @@
-.PHONY: all
+SHELL := /bin/bash
+.ONESHELL:
 
-all:
-		python3 --version
+.PHONY: run run_detailed
+
+run:
+	ls -la
+	. ./.venv-py-39/bin/activate
+	python main.py -i data_sample/nokia_detailed.csv
+
+run_detailed:
+	ls -la
+	. ./.venv-py-39/bin/activate
+	python main.py -i data_sample/nokia_detailed.csv

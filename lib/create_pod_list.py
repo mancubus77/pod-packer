@@ -24,7 +24,7 @@ class CreatPodList(object):
         for pod in pods:
             for values in map(
                 lambda x: {
-                    "app": pod["app"],
+                    "app": pod["app"] if "platform" not in pod else f"{pod['platform']}/{pod['app']}",
                     "mem": int(pod["mem"]),
                     "cpu": int(pod["cpu"]) / 1000,
                     "affinity": CreatPodList._get_antiaffinity(int(pod["affinity"])),

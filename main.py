@@ -93,7 +93,7 @@ def print_results():
                 len(node.pods),
                 node.cpu_used,
                 (node.cpu_used / node.cpu_total) * 100,
-                node.mem_used,
+                f"{node.mem_used:,}",
                 (node.mem_used / node.mem_total) * 100,
             ]
         )
