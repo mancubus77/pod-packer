@@ -3,7 +3,19 @@ from math import floor
 
 class CreatPodList(object):
     @staticmethod
-    def add_pods(pods=list) -> list:
+    def _get_antiaffinity(anti_affinity: int) -> int:
+        """
+        Update Anti Affinity if it's blank or none
+        :param anti_affinity: anti affinity int (input)
+        :return: anti affinity int (output)
+        """
+        if anti_affinity == 0:
+            return 1
+        else:
+            return anti_affinity
+
+    @staticmethod
+    def add_pods(pods: list) -> list:
         """
         Pods generator
         :param pods: list of pods
@@ -15,8 +27,11 @@ class CreatPodList(object):
                     "app": pod["app"],
                     "mem": int(pod["mem"]),
                     "cpu": int(pod["cpu"]) / 1000,
-                    "affinity": int(pod["affinity"]),
-                    "max_per_node": floor(int(pod["count"]) / int(pod["affinity"]))
+                    "affinity": CreatPodList._get_antiaffinity(int(pod["affinity"])),
+                    "max_per_node": floor(
+                        int(pod["count"])
+                        / CreatPodList._get_antiaffinity(int(pod["affinity"]))
+                    )
                     if pod["affinity"] != ""
                     else None,
                 },
