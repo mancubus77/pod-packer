@@ -76,6 +76,10 @@ def print_results():
     """
     table = BTable()
     pod_table = BTable()
+    summary_table = BTable()
+    summary_table.create_heading([
+        "nodes", "pods", "cpu", "mem"
+    ])
     table.create_heading(
         ["node", "pod count", "cpu", "cpu,%", "mem, GB", "mem,%",]
     )
@@ -100,8 +104,17 @@ def print_results():
                 pod_table.append_row([node.name] + [v for v in pod.values()])
                 if args.csv:
                     print(",".join([node.name] + [str(v) for v in pod.values()]))
+    summary_table.append_row(
+        [
+            len(node_list.node_list),
+            sum([len(i.pods) for i in node_list.node_list]),
+            sum([i.cpu_used for i in node_list.node_list]),
+            f"{sum([i.mem_used for i in node_list.node_list]):,}"
+        ]
+    )
     print(pod_table) if (args.detail and not args.csv) else None
     print(table)
+    print(f"SUMMARY\n{summary_table}")
 
 
 if __name__ == "__main__":
