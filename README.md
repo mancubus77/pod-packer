@@ -65,26 +65,21 @@ nginx,100,3,6,3
 
 ```shell
 > python main.py -i data_sample/example.csv
- [Tue, 21 Dec 2021 23:46:13] INFO [main.py.<module>:31] Starting allocation, there are 2 pods to be allocated
- [Tue, 21 Dec 2021 23:46:13] INFO [node.py.__init__:29] Creating new node compute-0
- [Tue, 21 Dec 2021 23:46:13] INFO [node.py.__init__:29] Creating new node compute-1
- [Tue, 21 Dec 2021 23:46:13] INFO [node.py.__init__:29] Creating new node compute-2
-+-----------+------+----------+-------------+----------+-------------+
-|   Node    | Pods | CPU Used | CPU Used, % | MEM Used | MEM Used, % |
-+-----------+------+----------+-------------+----------+-------------+
-| compute-0 |  2   |  0.006   |    0.006    |   200    |    0.052    |
-+-----------+------+----------+-------------+----------+-------------+
-| compute-1 |  2   |  0.006   |    0.006    |   200    |    0.052    |
-+-----------+------+----------+-------------+----------+-------------+
-| compute-2 |  2   |  0.006   |    0.006    |   200    |    0.052    |
-+-----------+------+----------+-------------+----------+-------------+
+ [Sat, 12 Feb 2022 20:06:27] INFO [main.py.<module>:83] Starting allocation, there are 2 apps to be allocated
+ [Sat, 12 Feb 2022 20:06:27] INFO [node.py.__init__:24] Creating new node compute-0
+ [Sat, 12 Feb 2022 20:06:27] INFO [node.py.__init__:24] Creating new node compute-1
+ [Sat, 12 Feb 2022 20:06:27] INFO [node.py.__init__:24] Creating new node compute-2
+Simulating node failure. Anit-Affinity violations will be ignored
+ [Sat, 12 Feb 2022 20:06:27] INFO [main.py.run_simulation:68] Running Simulation for compute-0
+ [Sat, 12 Feb 2022 20:06:27] INFO [main.py.run_simulation:68] Running Simulation for compute-1
+ [Sat, 12 Feb 2022 20:06:27] INFO [main.py.run_simulation:68] Running Simulation for compute-2
+NODE BREAKDOWN
 SUMMARY
 +-------+------+-------+-------+
 | nodes | pods |  cpu  |  mem  |
 +-------+------+-------+-------+
 |   3   |  12  | 0.036 | 1,200 |
 +-------+------+-------+-------+
-
 ```
 Detailed view
 ```shell
