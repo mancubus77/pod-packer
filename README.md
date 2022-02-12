@@ -44,7 +44,7 @@ ALLOCATION_PERCENT = 70
 
 
 ## Input data format (CSV)
-```cvs
+```
 app,mem,cpu,count,affinity
 apache,100,3,6,3
 nginx,100,3,6,3
@@ -61,7 +61,7 @@ nginx,100,3,6,3
 
 `platform` - (optional) used when apps have same names, but belong to different groups/platforms. For example app1:nginx and app2:nginx are not the same
 
-## Resuts and Demo
+## Results and Demo
 
 ```shell
 > python main.py -i data_sample/example.csv
