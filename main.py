@@ -1,5 +1,3 @@
-import logging
-
 from lib.create_pod_list import CreatPodList
 from argparse import ArgumentParser
 
@@ -50,13 +48,14 @@ def parse_args():
     return parser.parse_args()
 
 
-def run_allocations():
+def run_allocations(pods):
     """
     Start pod allocation process
+    :pods List of Pods
     :return: None
     """
     # Allocate nodes
-    for _pod in CreatPodList.add_pods(apps):
+    for _pod in pods:
         if not (_node := node_list.find_node(_pod)):
             logger.warning("Can not find schedulable node. Adding new one")
             _node = Node(
@@ -139,6 +138,7 @@ if __name__ == "__main__":
     node_list = Nodes()
     apps = sorted(csv_to_json(args.filename), key=lambda i: i["affinity"], reverse=True)
     logger.info(f"Starting allocation, there are {len(apps)} apps to be allocated")
+    # Create minimum workers pools
     for _ in range(MIN_WORKERS):
         node_list.add_node(
             node=Node(
@@ -148,6 +148,6 @@ if __name__ == "__main__":
                 allocation=ALLOCATION_PERCENT,
             )
         )
-    run_allocations()
+    run_allocations(CreatPodList.add_pods(apps))
     # Print Results
     print_results()
