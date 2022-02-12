@@ -65,10 +65,11 @@ class Nodes(Generic[NodeListClass]):
         else:
             return True
 
-    def find_node(self, pod: dict):
+    def find_node(self, pod: dict, exclude_node=None):
         """
         Find available node what can accommodate  POD
         :param pod: pod specs
+        :param exclude_node: Node excluded from scheduling
         :return: Node object
         """
         s = self.node_list
