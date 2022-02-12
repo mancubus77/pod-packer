@@ -40,8 +40,7 @@ def run_allocations(pods, mode=SCHEDULING, fault_simulation=None, excluded_node=
                     allocation=ALLOCATION_PERCENT,
                 )
                 node_list.add_node(_node)
-            else:
-                _node.add_pod(_pod)
+            _node.add_pod(_pod)
         elif mode == FAULTSIMULATION:
             if not (
                 _node := fault_simulation.find_node(_pod, exclude_node=excluded_node)

@@ -1,4 +1,3 @@
-from lib.test_pods import pods
 from typing import TypeVar, Generic
 from lib.log_logger import logger
 
@@ -23,21 +22,6 @@ class Node(Generic[NodeClass]):
         self.name = f"compute-{str(name)}"
         self.status = int
         logger.info(f"Creating new node compute-{str(name)}")
-
-    def __repr__(self):
-        return repr(self.pods_total)
-
-    def __le__(self, other):
-        return len(self.pods) < len(other.pods)
-
-    def __ne__(self, other):
-        return len(self.pods) == len(other.pods)
-
-    def __gt__(self, other):
-        return len(self.pods) > len(other.pods)
-
-    def __len__(self):
-        return len(pods)
 
     def add_pod(self, pod: dict) -> int:
         """
