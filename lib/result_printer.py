@@ -15,7 +15,7 @@ def print_results(args, node_list, summary_only=None):
     summary_table = BTable()
     summary_table.create_heading(["nodes", "pods", "cpu", "mem"])
     table.create_heading(
-        ["node", "pod count", "cpu", "cpu,%", "mem, GB", "mem,%",]
+        ["node", "pod count", "cpu", "cpu,%", "mem, MB", "mem,%",]
     )
     # blah...
     if args.csv and not summary_only:
