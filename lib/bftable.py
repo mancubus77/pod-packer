@@ -1,4 +1,4 @@
-from beautifultable import BeautifulTable
+from beautifultable import BeautifulTable, BTColumnCollection
 
 
 class BTable:
@@ -6,13 +6,13 @@ class BTable:
         self.table = BeautifulTable()
 
     def create_heading(self, headings: list):
-        self.table.column_headers = headings
+        self.table.columns.header = headings
 
     def append_row(self, row: list):
-        self.table.append_row(row)
+        self.table.rows.append(row)
 
     def is_headings(self):
-        return False if len(self.table.column_headers) == 0 else True
+        return False if len(self.table.columns.header) == 0 else True
 
     def __str__(self):
         return f"{self.table}"
