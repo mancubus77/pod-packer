@@ -1,10 +1,13 @@
 from lib.bftable import BTable
 
 
-def print_results(args, node_list):
+def print_results(args, node_list, summary_only=None):
     """
-    Print neat table using BTable
-    :return: Formatted Table with borders (string)
+    Print text table
+    :param args:
+    :param node_list:
+    :param summary_only:
+    :return:
     """
     summary_csv = []
     table = BTable()
@@ -15,7 +18,7 @@ def print_results(args, node_list):
         ["node", "pod count", "cpu", "cpu,%", "mem, GB", "mem,%",]
     )
     # blah...
-    if args.csv:
+    if args.csv and not summary_only:
         print("node,app,mem,cpu,anti-affinity,max_per_node")
     for node in sorted(node_list.node_list, key=lambda i: i.name):
         if not args.csv:
@@ -58,6 +61,9 @@ def print_results(args, node_list):
         ]
     )
     print(f"NODE BREAKDOWN")
+    if summary_only:
+        print(table)
+        return
     if args.detail and not args.csv:
         print(pod_table)
         print(f"{table}")

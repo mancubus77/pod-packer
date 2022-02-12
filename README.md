@@ -1,5 +1,5 @@
 ### Description
-This is a pet project to count number of nodes for OpenShift Kubernetes cluster by given number of PODS/CNFs
+This is a pet project to count number of nodes for OpenShift Kubernetes cluster by given number of PODS/CNFs.
 
 ### Installation / Setup  
 **Python 3.8+ and installed venv module are needed**
@@ -130,6 +130,28 @@ SUMMARY
 
 
 
+```
+
+### Failure domain
+After allocation the application shutdown nodes on by one and ensure that pods can be evicted. Anit-Affinity violation is ignored.
+In example below, if `compute-0` fails, pod `AUSF` won't be able to find a new node with sufficient resources. Test is failed (the app doesn't take in consideration min availability and pod disruption budget) 
+```
+[Sat, 12 Feb 2022 16:52:46] WARNING [node_list.py.is_node_schedulable:70] Node compute-2 is full: CPU: True MEM: False 216130 : 384000.0
+[Sat, 12 Feb 2022 16:52:46] ERROR [main.py.run_allocations:49] FAILED: Can not evict AUSF from failed node compute-1
+Reconsider ALLOCATION_PERCENT values, it's 100% now
+Allocated nodes: 4
+NODE BREAKDOWN
++-----------+-----------+---------+--------+---------+--------+
+|   node    | pod count |   cpu   | cpu,%  | mem, GB | mem,%  |
++-----------+-----------+---------+--------+---------+--------+
+| compute-0 |    90     | 103.953 | 99.955 | 215,767 | 56.189 |
++-----------+-----------+---------+--------+---------+--------+
+| compute-1 |    85     | 103.977 | 99.978 | 215,216 | 56.046 |
++-----------+-----------+---------+--------+---------+--------+
+| compute-2 |    92     | 103.99  | 99.99  | 210,212 | 54.743 |
++-----------+-----------+---------+--------+---------+--------+
+| compute-3 |    14     |  8.135  | 7.822  | 18,596  | 4.843  |
++-----------+-----------+---------+--------+---------+--------+
 ```
 
 ### TODO 

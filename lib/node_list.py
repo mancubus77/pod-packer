@@ -41,21 +41,32 @@ class Nodes(Generic[NodeListClass]):
         else:
             return False
 
-    def is_node_schedulable(self, node: NodeClass, pod: dict) -> bool:
+    def is_node_schedulable(self, node: NodeClass, pod: dict, failure=None) -> bool:
         """
         Check if pod can be schedulable on a node and doesn't have
         memory constrains or affinity rules violation
         :param node: Node object
         :param pod: Pod specs
+        :param failure: Simulate failure
         :return: True - Node is schedulable, False - node is not schdulable take next
         """
-        if self.is_affinity_full(pod, node):
+        if not failure and self.is_affinity_full(pod, node):
             logger.warning(f"{node.name} affinity violation for {pod['app']}")
             return False
         elif (
             node.cpu_used + pod["cpu"] > node.cpu_available
             or node.mem_used + pod["mem"] > node.mem_available
-        ):
+        ) and not failure:
+            logger.warning(
+                f"Node {node.name} is full: CPU: {node.cpu_used + pod['cpu'] > node.cpu_available} "
+                f"MEM: {node.mem_used + pod['mem'] > node.mem_available} "
+                f"{node.mem_used + pod['mem']} : {node.mem_available}"
+            )
+            return False
+        elif (
+            node.cpu_used + pod["cpu"] > node.cpu_total
+            or node.mem_used + pod["mem"] > node.mem_total
+        ) and failure:
             logger.warning(
                 f"Node {node.name} is full: CPU: {node.cpu_used + pod['cpu'] > node.cpu_available} "
                 f"MEM: {node.mem_used + pod['mem'] > node.mem_available} "
@@ -75,7 +86,10 @@ class Nodes(Generic[NodeListClass]):
         s = self.node_list
         s.sort(key=lambda x: x.pods_total)
         for _node in s:
-            if self.is_node_schedulable(_node, pod):
+            if _node == exclude_node:
+                logger.info(f"Excluding node {_node.name}")
+                continue
+            if self.is_node_schedulable(_node, pod, failure=exclude_node):
                 return _node
             else:
                 continue
