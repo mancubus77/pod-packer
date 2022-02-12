@@ -22,13 +22,13 @@ def parse_args():
     Parse CLI arguments
     :return: parser object with arguments
     """
-    parser = ArgumentParser(description="Read CSV form given path.")
+    parser = ArgumentParser(description="PODs scheduler simulator")
     parser.add_argument(
         "-i",
         "--input",
         dest="filename",
         required=True,
-        help="input file",
+        help="path to CSV file with PODs ",
         metavar="FILE",
     )
     parser.add_argument(
@@ -37,14 +37,14 @@ def parse_args():
         dest="detail",
         required=False,
         action="store_true",
-        help="Detailed view of pods breakdown",
+        help="Detailed view of pods breakdown per node",
     )
     parser.add_argument(
         "--csv",
         dest="csv",
         required=False,
         action="store_true",
-        help="csv output, needs to be used with -d/--detail",
+        help="generates output in csv format, should be used with -d/--detail",
     )
 
     return parser.parse_args()
@@ -74,12 +74,11 @@ def print_results():
     Print neat table using BTable
     :return: Formatted Table with borders (string)
     """
+    summary_csv = []
     table = BTable()
     pod_table = BTable()
     summary_table = BTable()
-    summary_table.create_heading([
-        "nodes", "pods", "cpu", "mem"
-    ])
+    summary_table.create_heading(["nodes", "pods", "cpu", "mem"])
     table.create_heading(
         ["node", "pod count", "cpu", "cpu,%", "mem, GB", "mem,%",]
     )
@@ -87,16 +86,29 @@ def print_results():
     if args.csv:
         print("node,app,mem,cpu,anti-affinity,max_per_node")
     for node in sorted(node_list.node_list, key=lambda i: i.name):
-        table.append_row(
-            [
-                node.name,
-                len(node.pods),
-                node.cpu_used,
-                (node.cpu_used / node.cpu_total) * 100,
-                f"{node.mem_used:,}",
-                (node.mem_used / node.mem_total) * 100,
-            ]
-        )
+        if not args.csv:
+            # Add row in formatted node table
+            table.append_row(
+                [
+                    node.name,
+                    len(node.pods),
+                    node.cpu_used,
+                    (node.cpu_used / node.cpu_total) * 100,
+                    f"{node.mem_used:,}",
+                    (node.mem_used / node.mem_total) * 100,
+                ]
+            )
+        else:
+            # Add row in CSV
+            summary_csv.append(
+                f"{node.name},"
+                f"{len(node.pods)},"
+                f"{node.cpu_used:.2f},"
+                f"{(node.cpu_used / node.cpu_total) * 100:.2f},"
+                f"{node.mem_used:.2f},"
+                f"{(node.mem_used / node.mem_total) * 100:.2f}"
+            )
+        # Generate pods details per node
         if args.detail:
             for pod in node.pods:
                 if not pod_table.is_headings():
@@ -104,16 +116,21 @@ def print_results():
                 pod_table.append_row([node.name] + [v for v in pod.values()])
                 if args.csv:
                     print(",".join([node.name] + [str(v) for v in pod.values()]))
+    # Add row to summary table
     summary_table.append_row(
         [
             len(node_list.node_list),
             sum([len(i.pods) for i in node_list.node_list]),
             sum([i.cpu_used for i in node_list.node_list]),
-            f"{sum([i.mem_used for i in node_list.node_list]):,}"
+            f"{sum([i.mem_used for i in node_list.node_list]):,}",
         ]
     )
-    print(pod_table) if (args.detail and not args.csv) else None
-    print(table)
+    print(f"NODE BREAKDOWN")
+    if args.detail and not args.csv:
+        print(pod_table)
+        print(f"{table}")
+    elif args.detail and args.csv:
+        print(f"\n".join(summary_csv))
     print(f"SUMMARY\n{summary_table}")
 
 

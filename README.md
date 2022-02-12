@@ -53,6 +53,8 @@ nginx,100,3,3,3
 
 `affinity` - affinity rules (pods in same group can not be launched on same server)
 
+`platform` - (optional) used when apps have same names, but belong to different groups/platforms. For example app1:nginx and app2:nginx are not the same
+
 ### Resuts and Demo
 
 ```python
