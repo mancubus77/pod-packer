@@ -1,12 +1,18 @@
-### Description
+## Description
 This is a pet project to count number of nodes for OpenShift Kubernetes cluster by given number of PODS/CNFs.
 
-### Installation / Setup  
+## Installation / Setup  
 **Python 3.8+ and installed venv module are needed**
-```
+### install 
+```shell
 python3 -m venv .venv 
 source .venv/bin/activate
 pip install -r requirements.txt
+```
+or for impatient
+```shell
+make install
+make run
 ```
 
 Script reads CSV file, which can be given via arguments
@@ -37,7 +43,7 @@ ALLOCATION_PERCENT = 70
 ```
 
 
-### Input data format (CSV)
+## Input data format (CSV)
 ```cvs
 app,mem,cpu,count,affinity
 apache,100,3,6,3
@@ -55,9 +61,9 @@ nginx,100,3,6,3
 
 `platform` - (optional) used when apps have same names, but belong to different groups/platforms. For example app1:nginx and app2:nginx are not the same
 
-### Resuts and Demo
+## Resuts and Demo
 
-```python
+```shell
 > python main.py -i data_sample/example.csv
  [Tue, 21 Dec 2021 23:46:13] INFO [main.py.<module>:31] Starting allocation, there are 2 pods to be allocated
  [Tue, 21 Dec 2021 23:46:13] INFO [node.py.__init__:29] Creating new node compute-0
@@ -81,7 +87,7 @@ SUMMARY
 
 ```
 Detailed view
-```python
+```shell
 ❯ python main.py -i data_sample/example.csv -d
  [Wed, 22 Dec 2021 16:59:43] INFO [main.py.<module>:65] Starting allocation, there are 2 apps to be allocated                                                            ─╯
  [Wed, 22 Dec 2021 16:59:43] INFO [node.py.__init__:29] Creating new node compute-0
@@ -135,7 +141,7 @@ SUMMARY
 ### Failure domain
 After allocation the application shutdown nodes on by one and ensure that pods can be evicted. Anit-Affinity violation is ignored.
 In example below, if `compute-0` fails, pod `AUSF` won't be able to find a new node with sufficient resources. Test is failed (the app doesn't take in consideration min availability and pod disruption budget) 
-```
+```shell
 [Sat, 12 Feb 2022 16:52:46] WARNING [node_list.py.is_node_schedulable:70] Node compute-2 is full: CPU: True MEM: False 216130 : 384000.0
 [Sat, 12 Feb 2022 16:52:46] ERROR [main.py.run_allocations:49] FAILED: Can not evict AUSF from failed node compute-1
 Reconsider ALLOCATION_PERCENT values, it's 100% now
