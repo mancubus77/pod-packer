@@ -37,11 +37,11 @@ ALLOCATION_PERCENT = 70
 ```
 
 
-### Input data format
+### Input data format (CSV)
 ```cvs
-name,mem,cpu,count,affinity
-apache,100,3,3,3
-nginx,100,3,3,3
+app,mem,cpu,count,affinity
+apache,100,3,6,3
+nginx,100,3,6,3
 ```
 `name` - name of pod group (must be unique)
 
