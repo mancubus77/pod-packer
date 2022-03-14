@@ -12,9 +12,10 @@ from lib.result_printer import print_results
 
 # Constants
 MIN_WORKERS = 3
-COMPUTE_CPU = 104
-COMPUTE_MEM = 384000
-ALLOCATION_PERCENT = 70
+COMPUTE_CPU = 64
+COMPUTE_MEM = 256000
+ALLOCATION_PERCENT = 100
+# Flags
 SCHEDULING = 1
 FAULTSIMULATION = 2
 
@@ -62,7 +63,7 @@ def run_simulation():
     ATM only one node is supported
     :return: none
     """
-    print(f"Simulating node failure. Anit-Affinity violations will be ignored")
+    print(f"Simulating node failure. Anti-Affinity violations will be ignored")
     for failed_node in node_list.node_list:
         fault_simulation = copy.deepcopy(node_list)
         logger.info(f"Running Simulation for {failed_node.name}")
@@ -75,8 +76,10 @@ def run_simulation():
 
 
 if __name__ == "__main__":
+    # Init classes
     args = parse_args()
     node_list = Nodes()
+    # Init vars
     apps = sorted(csv_to_json(args.filename), key=lambda i: i["affinity"], reverse=True)
     pods_list = CreatPodList.add_pods(apps)
 

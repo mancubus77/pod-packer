@@ -3,7 +3,7 @@ from math import floor
 
 class CreatPodList(object):
     @staticmethod
-    def _get_antiaffinity(anti_affinity: int) -> int:
+    def get_antiaffinity(anti_affinity: int) -> int:
         """
         Update Anti Affinity if it's blank or none
         :param anti_affinity: anti affinity int (input)
@@ -29,10 +29,10 @@ class CreatPodList(object):
                     else f"{pod['platform']}/{pod['app']}",
                     "mem": int(pod["mem"]),
                     "cpu": int(pod["cpu"]) / 1000,
-                    "affinity": CreatPodList._get_antiaffinity(int(pod["affinity"])),
+                    "affinity": CreatPodList.get_antiaffinity(int(pod["affinity"])),
                     "max_per_node": floor(
                         int(pod["count"])
-                        / CreatPodList._get_antiaffinity(int(pod["affinity"]))
+                        / CreatPodList.get_antiaffinity(int(pod["affinity"]))
                     )
                     if pod["affinity"] != ""
                     else None,
