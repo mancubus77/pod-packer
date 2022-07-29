@@ -36,7 +36,7 @@ class Nodes(Generic[NodeListClass]):
             return False
         entries = len([v for v in node.pods if v.get("app") == pod["app"]])
         if entries >= pod["max_per_node"]:
-            logger.info(f"Pod {pod['app']} has {entries} copies in {node.name}")
+            logger.debug(f"Pod {pod['app']} has {entries} copies in {node.name}")
             return True
         else:
             return False
@@ -50,9 +50,11 @@ class Nodes(Generic[NodeListClass]):
         :param failure: Simulate failure
         :return: True - Node is schedulable, False - node is not schdulable take next
         """
+        # Can not find node as anti-affinity rules violated
         if not failure and self.is_affinity_full(pod, node):
             logger.warning(f"{node.name} affinity violation for {pod['app']}")
             return False
+        # Can not find node as it has reached allowed capacity
         elif (
             node.cpu_used + pod["cpu"] > node.cpu_available
             or node.mem_used + pod["mem"] > node.mem_available
@@ -63,14 +65,16 @@ class Nodes(Generic[NodeListClass]):
                 f"{node.mem_used + pod['mem']} : {node.mem_available}"
             )
             return False
+        # Can not find node as it has reached MAX capacity
         elif (
             node.cpu_used + pod["cpu"] > node.cpu_total
             or node.mem_used + pod["mem"] > node.mem_total
         ) and failure:
             logger.warning(
-                f"Node {node.name} is full: CPU: {node.cpu_used + pod['cpu'] > node.cpu_available} "
-                f"MEM: {node.mem_used + pod['mem'] > node.mem_available} "
-                f"{node.mem_used + pod['mem']} : {node.mem_available}"
+                f"Node {node.name} is full: CPU: {node.cpu_used + pod['cpu'] > node.cpu_total} "
+                f"MEM: {node.mem_used + pod['mem'] > node.mem_total} "
+                f"MEM {node.mem_used + pod['mem']} : {node.mem_total} "
+                f"CPU {node.cpu_used + pod['cpu']} : {node.cpu_total}"
             )
             return False
         else:
@@ -83,17 +87,27 @@ class Nodes(Generic[NodeListClass]):
         :param exclude_node: Node excluded from scheduling
         :return: Node object
         """
+        affinity_violation = False
         s = self.node_list
         s.sort(key=lambda x: x.pods_total)
         for _node in s:
-            if _node == exclude_node:
-                logger.info(f"Excluding node {_node.name}")
+            if _node.name == getattr(exclude_node, "name", None):
+                logger.debug(f"Allocating {pod.get('app')} excluding node {_node.name}")
                 continue
-            if self.is_node_schedulable(_node, pod, failure=exclude_node):
+            elif exclude_node and self.is_affinity_full(pod, _node):
+                logger.debug(f"Skipping node as it's already has {pod.get('app')}")
+                affinity_violation = True
+                continue
+            elif self.is_node_schedulable(_node, pod, failure=exclude_node):
                 return _node
             else:
                 continue
-        return False
+        if not affinity_violation:
+            return False
+        else:
+            # Return excluded node, to pod can not be scheduled because of
+            # anti-affinity rules
+            return exclude_node
 
     def __len__(self):
         """

@@ -3,7 +3,7 @@ import colorlog
 import sys
 
 logger = logging.getLogger("")
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 sh = logging.StreamHandler(sys.stdout)
 formatter = logging.Formatter(
     "[%(asctime)s] %(levelname)s [%(filename)s.%(funcName)s:%(lineno)d] %(message)s",

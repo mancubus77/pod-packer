@@ -1,12 +1,33 @@
 from lib.bftable import BTable
 
 
-def print_results(args, node_list, summary_only=None):
+def prepare_csv(table, node):
+    """
+    Prints results from given data
+    :param table: BTable class
+    :param node: Node Class
+    :return: formatted table for print
+    """
+    table.append_row(
+        [
+            node.name,
+            len(node.pods),
+            node.cpu_used,
+            (node.cpu_used / node.cpu_total) * 100,
+            f"{node.mem_used:,}",
+            (node.mem_used / node.mem_total) * 100,
+        ]
+    )
+    return table
+
+
+def print_results(args, node_list, summary_only=None, print_failed=False):
     """
     Print text table
     :param args:
     :param node_list:
     :param summary_only:
+    :param print_failed:
     :return:
     """
     summary_csv = []
@@ -23,16 +44,7 @@ def print_results(args, node_list, summary_only=None):
     for node in sorted(node_list.node_list, key=lambda i: i.name):
         if not args.csv:
             # Add row in formatted node table
-            table.append_row(
-                [
-                    node.name,
-                    len(node.pods),
-                    node.cpu_used,
-                    (node.cpu_used / node.cpu_total) * 100,
-                    f"{node.mem_used:,}",
-                    (node.mem_used / node.mem_total) * 100,
-                ]
-            )
+            prepare_csv(table, node)
         else:
             # Add row in CSV
             summary_csv.append(
@@ -62,7 +74,7 @@ def print_results(args, node_list, summary_only=None):
     )
     print(f"NODE BREAKDOWN")
     if summary_only:
-        print(table)
+        print(summary_table)
         return
     if args.detail and not args.csv:
         print(pod_table)
