@@ -32,6 +32,7 @@ def run_allocations(pods, mode=SCHEDULING, fault_simulation=None, excluded_node=
     # Allocate nodes
     for _pod in pods:
         if mode == SCHEDULING:
+            new_node = False
             if not (_node := node_list.find_node(_pod)):
                 logger.warning("Can not find schedulable node. Adding new one")
                 _node = Node(
@@ -41,6 +42,23 @@ def run_allocations(pods, mode=SCHEDULING, fault_simulation=None, excluded_node=
                     allocation=ALLOCATION_PERCENT,
                 )
                 node_list.add_node(_node)
+                new_node = True
+            if new_node and (_node.cpu_available < _pod["cpu"] or _node.mem_available < _pod["mem"]):
+                if _node.cpu_available < _pod["cpu"]:
+                    logger.error(
+                        f"FAILED: Can not allocate pod {_pod['app']}, no node {_node.name}"
+                        f"as pod has high memory requirements than node"
+                        f"Node Mem: {_node.cpu_available} < {_pod['cpu']} "
+                    )
+                elif _node.mem_available < _pod["mem"]:
+                    logger.error(
+                        f"FAILED: Can not allocate pod {_pod['app']}, on node {_node.name} "
+                        f"as pod has high cpu requirements than node "
+                        f"Mem: {_node.mem_available} < {_pod['mem']}"
+                    )
+
+                print_results(args, node_list, summary_only=True)
+                sys.exit(255)
             _node.add_pod(_pod)
         elif mode == FAULTSIMULATION:
             if not (
