@@ -9,12 +9,10 @@ from lib.node_list import Nodes
 from lib.cvs_loader import csv_to_json
 from lib.arg_parser import parse_args
 from lib.result_printer import print_results
+# Config
+from config import MIN_WORKERS, COMPUTE_CPU, COMPUTE_MEM, ALLOCATION_PERCENT
 
-# Constants
-MIN_WORKERS = 3
-COMPUTE_CPU = 104
-COMPUTE_MEM = 384000
-ALLOCATION_PERCENT = 70
+# CONSTANTS/FLAGS
 SCHEDULING = 1
 FAULTSIMULATION = 2
 
@@ -31,6 +29,7 @@ def run_allocations(pods, mode=SCHEDULING, fault_simulation=None, excluded_node=
     # Allocate nodes
     for _pod in pods:
         if mode == SCHEDULING:
+            new_node = False
             if not (_node := node_list.find_node(_pod)):
                 logger.warning("Can not find schedulable node. Adding new one")
                 _node = Node(
@@ -40,10 +39,29 @@ def run_allocations(pods, mode=SCHEDULING, fault_simulation=None, excluded_node=
                     allocation=ALLOCATION_PERCENT,
                 )
                 node_list.add_node(_node)
+                new_node = True
+            if new_node and (_node.cpu_available < _pod["cpu"] or _node.mem_available < _pod["mem"]):
+                if _node.cpu_available < _pod["cpu"]:
+                    logger.error(
+                        f"FAILED: Can not allocate pod {_pod['app']}, no node {_node.name}"
+                        f"as pod has high memory requirements than node"
+                        f"Node Mem: {_node.cpu_available} < {_pod['cpu']} "
+                    )
+                    sys.exit(255)
+                elif _node.mem_available < _pod["mem"]:
+                    logger.error(
+                        f"FAILED: Can not allocate pod {_pod['app']}, on node {_node.name} "
+                        f"as pod has high cpu requirements than node "
+                        f"Mem: {_node.mem_available} < {_pod['mem']}"
+                    )
+                    sys.exit(255)
+
+                print_results(args, node_list, summary_only=True)
+                sys.exit(255)
             _node.add_pod(_pod)
         elif mode == FAULTSIMULATION:
             if not (
-                _node := fault_simulation.find_node(_pod, exclude_node=excluded_node)
+                _node := node_list.find_node(_pod, exclude_node=excluded_node)
             ):
                 logger.error(
                     f"FAILED: Can not evict {_pod.get('app')} from failed node {excluded_node.name}\n"
@@ -52,7 +70,10 @@ def run_allocations(pods, mode=SCHEDULING, fault_simulation=None, excluded_node=
                 )
                 print_results(args, node_list, summary_only=True)
                 sys.exit(255)
+            # elif _node == excluded_node:
+            #     continue
             else:
+                # When pod can not be scheduled, because it's already has a copy
                 _node.add_pod(_pod)
 
 
@@ -62,21 +83,30 @@ def run_simulation():
     ATM only one node is supported
     :return: none
     """
-    print(f"Simulating node failure. Anit-Affinity violations will be ignored")
-    for failed_node in node_list.node_list:
-        fault_simulation = copy.deepcopy(node_list)
+    global node_list
+    print(f"Simulating node failure. Anti-Affinity violations will be ignored")
+    for failed_node in copy.deepcopy(node_list).node_list:
+        fault_simulation_copy = copy.deepcopy(node_list)
         logger.info(f"Running Simulation for {failed_node.name}")
+        for i, o in enumerate(node_list.node_list):
+            if o.name == failed_node.name:
+                del node_list.node_list[i]
+                break
         run_allocations(
             failed_node.pods,
-            fault_simulation=fault_simulation,
             mode=FAULTSIMULATION,
-            excluded_node=failed_node,
+            excluded_node=failed_node
         )
+        print(f"Result of simulation for failed node {failed_node.name}")
+        print_results(args, node_list, summary_only=True)
+        node_list = copy.deepcopy(fault_simulation_copy)
 
 
 if __name__ == "__main__":
+    # Init classes
     args = parse_args()
     node_list = Nodes()
+    # Init vars
     apps = sorted(csv_to_json(args.filename), key=lambda i: i["affinity"], reverse=True)
     pods_list = CreatPodList.add_pods(apps)
 
@@ -93,7 +123,7 @@ if __name__ == "__main__":
         )
     # Runa allocations
     run_allocations(pods_list)
-    # Run Fault simulation
-    run_simulation()
     # Print Results
     print_results(args, node_list)
+    # Run Fault simulation
+    run_simulation()
