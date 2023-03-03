@@ -87,10 +87,10 @@ class Nodes(Generic[NodeListClass]):
         :param exclude_node: Node excluded from scheduling
         :return: Node object
         """
-        affinity_violation = False
         s = self.node_list
         s.sort(key=lambda x: x.pods_total)
         for _node in s:
+            affinity_violation = False
             if _node.name == getattr(exclude_node, "name", None):
                 logger.debug(f"Allocating {pod.get('app')} excluding node {_node.name}")
                 continue
@@ -107,7 +107,7 @@ class Nodes(Generic[NodeListClass]):
         else:
             # Return excluded node, to pod can not be scheduled because of
             # anti-affinity rules
-            return exclude_node
+            return _node
 
     def __len__(self):
         """

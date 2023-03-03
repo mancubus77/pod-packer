@@ -71,6 +71,8 @@ def run_allocations(pods, mode=SCHEDULING, fault_simulation=None, excluded_node=
                 )
                 print_results(args, node_list, summary_only=True)
                 sys.exit(255)
+            # elif _node == excluded_node:
+            #     continue
             else:
                 # When pod can not be scheduled, because it's already has a copy
                 _node.add_pod(_pod)

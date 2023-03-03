@@ -74,6 +74,8 @@ def print_results(args, node_list, summary_only=None, print_failed=False):
     )
     print(f"NODE BREAKDOWN")
     if summary_only:
+        print(table)
+        print("Summary")
         print(summary_table)
         return
     if args.detail and not args.csv:
