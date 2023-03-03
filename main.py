@@ -46,15 +46,15 @@ def run_allocations(pods, mode=SCHEDULING, fault_simulation=None, excluded_node=
             ):
                 if _node.cpu_available < _pod["cpu"]:
                     logger.error(
-                        f"FAILED: Can not allocate pod {_pod['app']}, no node {_node.name}"
-                        f"as pod has high memory requirements than node"
-                        f"Node Mem: {_node.cpu_available} < {_pod['cpu']} "
+                        f"FAILED: Can not allocate pod {_pod['app']}, on node {_node.name} "
+                        f"as pod CPU requirements higher than vCPU on server "
+                        f"Node CPU>: {_node.cpu_available} < {_pod['cpu']} "
                     )
                     sys.exit(255)
                 elif _node.mem_available < _pod["mem"]:
                     logger.error(
                         f"FAILED: Can not allocate pod {_pod['app']}, on node {_node.name} "
-                        f"as pod has high cpu requirements than node "
+                        f"as pod Memory requirements higher than physical memory. "
                         f"Mem: {_node.mem_available} < {_pod['mem']}"
                     )
                     sys.exit(255)
