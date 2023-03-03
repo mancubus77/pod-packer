@@ -1,9 +1,11 @@
 import logging
 import colorlog
 import sys
+import os
 
 logger = logging.getLogger("")
-logger.setLevel(logging.INFO)
+level = os.environ.get('LOGLEVEL', 'INFO').upper()
+logger.setLevel(level)
 sh = logging.StreamHandler(sys.stdout)
 formatter = logging.Formatter(
     "[%(asctime)s] %(levelname)s [%(filename)s.%(funcName)s:%(lineno)d] %(message)s",

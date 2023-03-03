@@ -110,7 +110,7 @@ if __name__ == "__main__":
     apps = sorted(csv_to_json(args.filename), key=lambda i: i["affinity"], reverse=True)
     pods_list = CreatPodList.add_pods(apps)
 
-    logger.info(f"Starting allocation, there are {len(apps)} apps to be allocated")
+    logger.info(f"Starting allocation, there are {len(apps)} apps to be allocated. Log level {logger.level}")
     # Create minimum workers pools
     for _ in range(MIN_WORKERS):
         node_list.add_node(

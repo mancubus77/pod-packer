@@ -155,5 +155,18 @@ NODE BREAKDOWN
 +-----------+-----------+---------+--------+---------+--------+
 ```
 
+### DEBUG 
+
+ To run script in debug mode add environment variable `LOGLEVEL=DEBUG` 
+
+```shell
+export LOGLEVEL=DEBUG
+python main.py -i data_sample/example.csv
+```
+or run make script
+```shell
+make run-debug
+```
+
 ### TODO 
-Probably make a web version
+Web UI with visualisation
