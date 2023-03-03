@@ -9,13 +9,10 @@ from lib.node_list import Nodes
 from lib.cvs_loader import csv_to_json
 from lib.arg_parser import parse_args
 from lib.result_printer import print_results
+# Config
+from config import MIN_WORKERS, COMPUTE_CPU, COMPUTE_MEM, ALLOCATION_PERCENT
 
-# Constants
-MIN_WORKERS = 3
-COMPUTE_CPU = 16
-COMPUTE_MEM = 32000
-ALLOCATION_PERCENT = 70
-# Flags
+# CONSTANTS/FLAGS
 SCHEDULING = 1
 FAULTSIMULATION = 2
 
@@ -50,12 +47,14 @@ def run_allocations(pods, mode=SCHEDULING, fault_simulation=None, excluded_node=
                         f"as pod has high memory requirements than node"
                         f"Node Mem: {_node.cpu_available} < {_pod['cpu']} "
                     )
+                    sys.exit(255)
                 elif _node.mem_available < _pod["mem"]:
                     logger.error(
                         f"FAILED: Can not allocate pod {_pod['app']}, on node {_node.name} "
                         f"as pod has high cpu requirements than node "
                         f"Mem: {_node.mem_available} < {_pod['mem']}"
                     )
+                    sys.exit(255)
 
                 print_results(args, node_list, summary_only=True)
                 sys.exit(255)
