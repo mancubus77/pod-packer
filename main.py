@@ -3,12 +3,13 @@ import copy
 
 # Project libs
 from lib.create_pod_list import CreatPodList
-from lib.log_logger import logger
-from lib.node import Node, NodeClass
+from lib.log_logger import logger, level
+from lib.node import Node
 from lib.node_list import Nodes
 from lib.cvs_loader import csv_to_json
 from lib.arg_parser import parse_args
 from lib.result_printer import print_results
+
 # Config
 from config import MIN_WORKERS, COMPUTE_CPU, COMPUTE_MEM, ALLOCATION_PERCENT
 
@@ -40,7 +41,9 @@ def run_allocations(pods, mode=SCHEDULING, fault_simulation=None, excluded_node=
                 )
                 node_list.add_node(_node)
                 new_node = True
-            if new_node and (_node.cpu_available < _pod["cpu"] or _node.mem_available < _pod["mem"]):
+            if new_node and (
+                _node.cpu_available < _pod["cpu"] or _node.mem_available < _pod["mem"]
+            ):
                 if _node.cpu_available < _pod["cpu"]:
                     logger.error(
                         f"FAILED: Can not allocate pod {_pod['app']}, no node {_node.name}"
@@ -60,9 +63,7 @@ def run_allocations(pods, mode=SCHEDULING, fault_simulation=None, excluded_node=
                 sys.exit(255)
             _node.add_pod(_pod)
         elif mode == FAULTSIMULATION:
-            if not (
-                _node := node_list.find_node(_pod, exclude_node=excluded_node)
-            ):
+            if not (_node := node_list.find_node(_pod, exclude_node=excluded_node)):
                 logger.error(
                     f"FAILED: Can not evict {_pod.get('app')} from failed node {excluded_node.name}\n"
                     f"Reconsider ALLOCATION_PERCENT values, it's {ALLOCATION_PERCENT}% now\n"
@@ -84,7 +85,7 @@ def run_simulation():
     :return: none
     """
     global node_list
-    print(f"Simulating node failure. Anti-Affinity violations will be ignored")
+    print("Simulating node failure. Anti-Affinity violations will be ignored")
     for failed_node in copy.deepcopy(node_list).node_list:
         fault_simulation_copy = copy.deepcopy(node_list)
         logger.info(f"Running Simulation for {failed_node.name}")
@@ -93,9 +94,7 @@ def run_simulation():
                 del node_list.node_list[i]
                 break
         run_allocations(
-            failed_node.pods,
-            mode=FAULTSIMULATION,
-            excluded_node=failed_node
+            failed_node.pods, mode=FAULTSIMULATION, excluded_node=failed_node
         )
         print(f"Result of simulation for failed node {failed_node.name}")
         print_results(args, node_list, summary_only=True)
@@ -110,7 +109,9 @@ if __name__ == "__main__":
     apps = sorted(csv_to_json(args.filename), key=lambda i: i["affinity"], reverse=True)
     pods_list = CreatPodList.add_pods(apps)
 
-    logger.info(f"Starting allocation, there are {len(apps)} apps to be allocated. Log level {logger.level}")
+    logger.info(
+        f"Starting allocation, there are {len(apps)} apps to be allocated. Log level {level}"
+    )
     # Create minimum workers pools
     for _ in range(MIN_WORKERS):
         node_list.add_node(
