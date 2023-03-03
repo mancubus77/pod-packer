@@ -30,15 +30,15 @@ optional arguments:
   --csv                 csv output, needs to be used with -d/--detail
 ```
 
-To update servers HW specifications modify `main.py`
+To update servers HW specifications modify `config.py`
 ```python
 # Minimum workers to start calculation
 MIN_WORKERS = 3 
-# CPUs on server (cores)
+# vCPUs (or cores for non HT) on server
 COMPUTE_CPU = 104
 # Memory on server (MB)
 COMPUTE_MEM = 384000
-# Allowed maximum resource allocation (for redudancy)
+# Allowed maximum resource allocation (for high availability)
 ALLOCATION_PERCENT = 70
 ```
 
