@@ -3,6 +3,9 @@ from lib.log_logger import logger
 
 NodeClass = TypeVar("NodeClass")
 
+KUBELET_MEMORY_RESERVE = 14000
+KUBELET_VCPU_RESERVE = 7
+
 
 class Node(Generic[NodeClass]):
     """
@@ -10,8 +13,17 @@ class Node(Generic[NodeClass]):
     """
 
     def __init__(self, name: int, mem_total: int, cpu_total: int, allocation: int):
-        self.mem_total = mem_total
-        self.cpu_total = cpu_total
+        """
+        Add new node with class creation
+        :param name: Name of the node
+        :param mem_total: Total memory
+        :param cpu_total: Total vCPU
+        :param allocation: Allowed CPU allocation
+        """
+        # Kubelet and OCP Memory Reserves: 13550
+        # Kubelet and OCP CPU Reserves: 7000
+        self.mem_total = mem_total - KUBELET_MEMORY_RESERVE
+        self.cpu_total = cpu_total - KUBELET_VCPU_RESERVE
         self.allocation = allocation
         self.mem_available = mem_total * (allocation / 100)
         self.cpu_available = cpu_total * (allocation / 100)
