@@ -46,3 +46,21 @@ class Node(Generic[NodeClass]):
         self.pods.append(pod)
         self.pods_total = len(self.pods)
         return len(self.pods)
+
+    def reset_allocation(self):
+        """
+        Reset allocation for failover testing
+        :return: none
+        """
+        self.mem_available = self.mem_total
+        self.cpu_available = self.cpu_total
+        return self
+
+    def restore_allocation(self):
+        """
+        Restore allocation
+        :return: none
+        """
+        self.mem_available = self.mem_total * (self.allocation / 100)
+        self.cpu_available = self.cpu_total * (self.allocation / 100)
+        return self

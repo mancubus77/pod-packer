@@ -8,7 +8,7 @@ class BTable:
 
     def __init__(self):
         self.table = BeautifulTable()
-        self.table.set_style(BeautifulTable.STYLE_RST)
+        self.table.set_style(BeautifulTable.STYLE_GRID)
 
     def create_heading(self, headings: list):
         self.table.columns.header = headings
