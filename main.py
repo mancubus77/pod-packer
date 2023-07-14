@@ -94,7 +94,9 @@ def run_simulation():
                 del node_list.node_list[i]
                 break
         run_allocations(
-            failed_node.pods, mode=FAULTSIMULATION, excluded_node=failed_node.reset_allocation()
+            failed_node.pods,
+            mode=FAULTSIMULATION,
+            excluded_node=failed_node.reset_allocation(),
         )
         print(f"Result of simulation for failed node {failed_node.name}")
         print_results(args, node_list, summary_only=True)
