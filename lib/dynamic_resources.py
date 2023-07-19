@@ -1,3 +1,7 @@
+# The logic borrowed from here: https://access.redhat.com/solutions/5843241
+# and here: https://github.com/openshift/machine-config-operator/blob/02b4d9cb446ce58dc9e895e617917bdc653ca50b/templates/common/_base/files/kubelet-auto-sizing.yaml#L11
+
+
 def kublet_reserve_mem(total_memory: int) -> int:
     """Dynamically calculate memory for kubelet
 
