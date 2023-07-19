@@ -9,6 +9,7 @@ from lib.node_list import Nodes
 from lib.cvs_loader import csv_to_json
 from lib.arg_parser import parse_args
 from lib.result_printer import print_results
+import lib.helpers as helpers
 
 # Config
 from config import MIN_WORKERS, COMPUTE_CPU, COMPUTE_MEM, ALLOCATION_PERCENT
@@ -129,4 +130,5 @@ if __name__ == "__main__":
     # Print Results
     print_results(args, node_list)
     # Run Fault simulation
-    run_simulation()
+    if helpers.do_faultsim():
+        run_simulation()

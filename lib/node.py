@@ -1,10 +1,8 @@
 from typing import TypeVar, Generic
 from lib.log_logger import logger
+from lib.dynamic_resources import kublet_reserve_mem, kublet_reserve_cpu
 
 NodeClass = TypeVar("NodeClass")
-
-KUBELET_MEMORY_RESERVE = 14000
-KUBELET_VCPU_RESERVE = 7
 
 
 class Node(Generic[NodeClass]):
@@ -20,10 +18,9 @@ class Node(Generic[NodeClass]):
         :param cpu_total: Total vCPU
         :param allocation: Allowed CPU allocation
         """
-        # Kubelet and OCP Memory Reserves: 13550
-        # Kubelet and OCP CPU Reserves: 7000
-        self.mem_total = mem_total - KUBELET_MEMORY_RESERVE
-        self.cpu_total = cpu_total - KUBELET_VCPU_RESERVE
+        # Calculate dynamic kublet resource allocation
+        self.mem_total = mem_total - kublet_reserve_mem(mem_total)
+        self.cpu_total = cpu_total - kublet_reserve_cpu(cpu_total)
         self.allocation = allocation
         self.mem_available = mem_total * (allocation / 100)
         self.cpu_available = cpu_total * (allocation / 100)
