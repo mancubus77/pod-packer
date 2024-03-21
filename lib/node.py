@@ -22,8 +22,8 @@ class Node(Generic[NodeClass]):
         self.mem_total = mem_total - kublet_reserve_mem(mem_total)
         self.cpu_total = cpu_total - kublet_reserve_cpu(cpu_total)
         self.allocation = allocation
-        self.mem_available = mem_total * (allocation / 100)
-        self.cpu_available = cpu_total * (allocation / 100)
+        self.mem_available = self.mem_total * (allocation / 100)
+        self.cpu_available = self.cpu_total * (allocation / 100)
         self.mem_used = 0
         self.cpu_used = 0
         self.pods = []

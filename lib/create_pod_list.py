@@ -1,6 +1,6 @@
 from math import floor
 
-
+#TODO: Track odd pod counts or anti-affinity and use CEILING instead of FLOOR
 class CreatPodList(object):
     @staticmethod
     def get_antiaffinity(anti_affinity: int) -> int:
